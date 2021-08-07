@@ -2,7 +2,7 @@
 
 import chess
 from time import time
-from chess import Move, Board
+from chess import Move, Board, Piece
 import random
 
 def returnBoard(move, board):

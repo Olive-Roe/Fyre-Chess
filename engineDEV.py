@@ -1,13 +1,13 @@
 # FyreChess 1.3
 
-import chess
+
 from time import time
-from chess import Move, Board
-import random
+from chess import Move, Board, Piece
+from random import choice
 
 
 def returnBoard(move, board):
-    b = chess.Board(boardToParseableBoard(board))
+    b = Board(boardToParseableBoard(board))
     b.push(move)
     return b
 
@@ -22,9 +22,9 @@ def createBoardTree(board):
 
 def boardToString(board):
     "Converts a board into a string from the exact same board."
-    if str(type(board)) == "<class 'chess.Board'>":
+    if type(board) == Board:
         return "".join(list(str([board]))[1:][:-1])
-    elif str(type(board)) == "<class 'str'>":
+    elif type(board) == str:
         return board
     else:
         raise ValueError(
@@ -40,20 +40,24 @@ pieceToSymbols = {"P": [1, True], "N": [2, True], "B": [3, True], "R": [4, True]
                   "p": [1, False], "n": [2, False], "b": [3, False], "r": [4, False], "q": [5, False], "k": [6, False]}
 
 
-def symbolPrint(board):
+def symPrint(board):
     "Returns a board printed with pieces as unicode symbols."
     outputList = []
     stringBoard = "".join(boardToParseableBoard(board).split(" ")[0])
     for symbol in stringBoard:
         if symbol in pieceToSymbols:
             pList = pieceToSymbols[symbol]
-            outputList.append(chess.Piece(pList[0], pList[1]).unicode_symbol())
+            outputList.append(Piece(pList[0], pList[1]).unicode_symbol())
         elif symbol == "/":
             outputList.append("/")
         else:  # symbol is a number and represents blank spaces
             for x in range(int(symbol)):
                 outputList.append(u"\u3000")
     return " " + "\n".join((" ".join(outputList)).split("/"))
+
+
+def symbolPrint(board):
+    return board  # change to symPrint for ASCII printing
 
 
 positions = [11, 12, 13, 14, 15, 16, 17, 18, "", 21, 22, 23, 24, 25, 26, 27, 28, "", 31, 32, 33, 34, 35, 36, 37, 38, "", 41, 42, 43, 44, 45, 46, 47,
@@ -347,7 +351,7 @@ def evaluateDeep(board, depth, tree, capture=False):
     if inOpening:
         oMove = openingMove(board)
         if oMove != False:
-            return [(random.choice(oMove), 0)]
+            return [(choice(oMove), 0)]
         else:
             inOpening = False
     if board.is_game_over():
@@ -378,7 +382,7 @@ def evaluateDeep(board, depth, tree, capture=False):
                 return [("", evaluate(board))]
     outputList = {}
     boardTree = createBoardTree(board)
-    randomMove = random.choice([a for a in boardTree])
+    randomMove = choice([a for a in boardTree])
     if depth == 0 and capture == True:
         highestPairs = [(randomMove, float(evaluateDeep(
             boardTree[randomMove], depth, tree)[0][1]))]
@@ -437,7 +441,7 @@ def evaluateDeep2(board, depth, tree, capture=False, alpha=float('-inf'), beta=f
     if inOpening:
         oMove = openingMove(board)
         if oMove != False:
-            return [(random.choice(oMove), 0)]
+            return [(choice(oMove), 0)]
         else:
             inOpening = False
     if board.is_game_over():
@@ -464,7 +468,7 @@ def evaluateDeep2(board, depth, tree, capture=False, alpha=float('-inf'), beta=f
                 return [("", evaluate(board))]
     outputList = {}
     boardTree = createBoardTree(board)
-    randomMove = random.choice([a for a in boardTree])
+    randomMove = choice([a for a in boardTree])
     if depth == 0 and capture == True:
         highestPairs = [(randomMove, float(evaluateDeep(
             boardTree[randomMove], depth, tree)[0][1]))]
@@ -522,8 +526,10 @@ def evaluateDeep3(board, depth, capture=False, alpha=float('-inf'), beta=float('
     if depth != 0:
         firstRepetition = True
         boardTree = createBoardTree(board)
+        print(boardTree)
         for move in boardTree:
             boardState = boardTree[move]
+            print(move, boardState)
             evaluation, move1 = evaluateDeep3(boardState, depth-1)[0]
             currentMove = evaluation, move
             if firstRepetition == True:
@@ -544,9 +550,8 @@ def evaluateThisv2(board, tree):
     return evaluateDeep2(board, 2, tree)
 
 
-def evaluateThisv1(board, tree):  # obsolete
-    pass
-#    return branchEval(board, tree) #branchEval code is not here
+def evaluateThisv1(board, tree):  # not working yet
+    return evaluateDeep3(board, 2)
 
 
 def playAgainstPlayer(computerColor, startingBoard, tree):
@@ -569,29 +574,14 @@ def playAgainstPlayer(computerColor, startingBoard, tree):
         else:  # black loses
             return "White"
 
-    def computerMove1():  # old version, obsolete
-        while True:
-            try:
-                moves = evaluateThisv1(b, t)
-                if moves != None:
-                    move = random.choice(moves)
-                    evaluation = evaluate(b)
-                    break
-            except ValueError:
-                print("Invalid move.")
-                continue
-        moveList.append(b.san(move))
-        b.push(move)
-        print(symbolPrint(b), move, evaluation, "\n")
-
     def computerMove2():  # new version
         start = time()
         move = ""
         while True:
             try:
-                moves = evaluateThisv2(b, t)
+                moves = evaluateThisv1(b, t)
                 if moves != None:
-                    move, evaluation = random.choice(moves)
+                    move, evaluation = choice(moves)
                     break
             except ValueError:
                 print("Invalid move.")
@@ -599,7 +589,7 @@ def playAgainstPlayer(computerColor, startingBoard, tree):
                 continue
         moveList.append(b.san(move))
         b.push(move)
-        print(symbolPrint(b), move, evaluation, "\n")
+        print(symbolPrint(b), move, evaluation, timeList[-1], "\n")
         end = time()
         timeList.append(end - start)
 
