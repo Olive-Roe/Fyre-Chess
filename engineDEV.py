@@ -528,6 +528,10 @@ def evaluateDeep3(board: Board, depth: int, capture=False, alpha=float('-inf'), 
         for move in boardTree:
             boardState = boardTree[move]
             evaluation, move1 = evaluateDeep3(boardState, depth-1)
+            if evaluation == float('inf') and board.turn:
+                return (float('inf'), move)
+            elif evaluation == float('-inf') and (not board.turn):
+                return (float('-inf'), move)
             if firstRepetition == True:
                 bestEval = evaluation
                 bestMove = move
@@ -537,7 +541,7 @@ def evaluateDeep3(board: Board, depth: int, capture=False, alpha=float('-inf'), 
                 bestMove = move
                 bestEval = evaluation
             # or if it's black's move,
-            elif evaluation < bestEval:
+            elif (board.turn) == False and evaluation < bestEval:
                 bestMove = move
                 bestEval = evaluation
         return evaluation, bestMove
@@ -561,10 +565,10 @@ def playAgainstPlayer(computerColor, startingBoard, tree):
     inOpening = True
     starting = giveTurnColor(startingBoard)
 
-    def endCheck(board):
+    def endCheck(board: Board):
         return board.is_game_over()
 
-    def end(board):
+    def end(board: Board):
         losingPlayer = board.turn  # returns True for white, False for black
         if losingPlayer:  # white loses
             return "Black"
@@ -681,9 +685,9 @@ def playAgainstPlayer(computerColor, startingBoard, tree):
         print(getPGN(moveList, b))
 
 if __name__ == "__main__":
-    print(getBoardfromPGN("1. e4 Nf6 2. e5 Nc6 3. exf6 exf6 4. Nf3 d5 5. Be2 Bd6 6. O-O O-O 7. d3 Be6 8. Nbd2 Ne5 9. b3 Nxd3 10. cxd3 f5 11. Ne5 Bxe5 12. Ba3 Bxa1 13. Bxf8 Qxf8 14. Qxa1 Qd6 15. Nf3 f4 16. Ne5 Qxe5 17. Qxe5 f3 18. Bxf3 Re8 19. Rc1 d4 20. Bg4"))
+    print(boardToParseableBoard(getBoardfromPGN("1. e4 Nf6 2. e5 Nc6 3. exf6 exf6 4. Nf3 d5 5. Be2 Bd6 6. O-O O-O 7. d3 Be6 8. Nbd2 Ne5 9. b3 Nxd3 10. cxd3 f5 11. Ne5 Bxe5 12. Ba3 Bxa1 13. Bxf8 Qxf8 14. Qxa1 Qd6 15. Nf3 f4 16. Ne5 Qxe5 17. Qxe5 f3 18. Bxf3 Re8 19. Rc1 d4 20. Bg4")))
+    board1 = Board('4r1k1/ppp2ppp/4b3/4Q3/3p2B1/1P1P4/P4PPP/2R3K1 b - - 1 20')
     masterTree = {}
-    board1 = Board()
     playAgainstPlayer("b", board1, masterTree)
 
 
