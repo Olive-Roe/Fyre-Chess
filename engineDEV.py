@@ -178,7 +178,7 @@ def getBoardfromPGN(pgn):
 
 
 def giveTurnColor(board):
-    "Takes a board and returns w or b for the player to move."
+    "Takes a board and returns 'w' or 'b' for the player to move."
     b = boardToParseableBoard(board).split(" ")
     return b[1]
 
@@ -343,7 +343,7 @@ inOpening = True
 moveProgress = []
 
 
-def evaluateDeep(board, depth, tree, capture=False):
+def evaluateDeep(board: Board, depth: int, tree: dict, capture=False):
     global moveProgress
     global inOpening
     if depth == 2:
@@ -429,7 +429,6 @@ def evaluateDeep(board, depth, tree, capture=False):
                     if evaluation < highestVal:
                         highestPairs = [(move, evaluation)]
     tree[boardToString(board)] = [boardTree, highestPairs]
-##    print(highestPairs, depth)
     return highestPairs
 
 
@@ -511,7 +510,7 @@ def evaluateDeep2(board, depth, tree, capture=False, alpha=float('-inf'), beta=f
     return highestPairs
 
 
-def evaluateDeep3(board, depth, capture=False, alpha=float('-inf'), beta=float('inf')):  # does not work yet
+def evaluateDeep3(board: Board, depth: int, capture=False, alpha=float('-inf'), beta=float('inf')):  # does not work yet
     '''returns (evaluation, move) of the best move'''
     # game over checks
     if board.is_game_over():
@@ -526,24 +525,22 @@ def evaluateDeep3(board, depth, capture=False, alpha=float('-inf'), beta=float('
     if depth != 0:
         firstRepetition = True
         boardTree = createBoardTree(board)
-        print(boardTree)
         for move in boardTree:
             boardState = boardTree[move]
-            print(move, boardState)
-            evaluation, move1 = evaluateDeep3(boardState, depth-1)[0]
-            currentMove = evaluation, move
+            evaluation, move1 = evaluateDeep3(boardState, depth-1)
             if firstRepetition == True:
-                bestMove = (evaluation, currentMove)
+                bestEval = evaluation
+                bestMove = move
                 firstRepetition = False
             # if it's white's move and the current move is better than the best move,
-            elif board.turn and evaluation > bestMove[0]:
-                bestMove = currentMove
+            elif board.turn and evaluation > bestEval:
+                bestMove = move
+                bestEval = evaluation
             # or if it's black's move,
-            elif evaluation < bestMove[0]:
-                bestMove = currentMove
-            print(bestMove)
-        print("finally, ", depth, bestMove)
-        return bestMove
+            elif evaluation < bestEval:
+                bestMove = move
+                bestEval = evaluation
+        return evaluation, bestMove
 
 
 def evaluateThisv2(board, tree):
@@ -574,24 +571,25 @@ def playAgainstPlayer(computerColor, startingBoard, tree):
         else:  # black loses
             return "White"
 
-    def computerMove2():  # new version
+    def computerMove3():  # new version
         start = time()
         move = ""
         while True:
             try:
-                moves = evaluateThisv1(b, t)
-                if moves != None:
-                    move, evaluation = choice(moves)
+                a = evaluateThisv1(b, t)
+                if a != None:
+                    evaluation, move = a
                     break
             except ValueError:
                 print("Invalid move.")
                 print(move)
                 continue
+        print(b.san(move))
         moveList.append(b.san(move))
         b.push(move)
-        print(symbolPrint(b), move, evaluation, timeList[-1], "\n")
         end = time()
         timeList.append(end - start)
+        print(symbolPrint(b), move, evaluation, timeList[-1], "\n")
 
     def humanMove():
         while True:
@@ -608,133 +606,85 @@ def playAgainstPlayer(computerColor, startingBoard, tree):
                     moveList.pop(moveList[-1])
                     moveList.pop(moveList[-1])
                 elif inp.lower() == "time":
-                    print("Time taken on last move: ")
-                    print(timeList[-1])
-                    print("Time for every move: ")
-                    print(timeList)
+                    print(f"Time taken on last move: {timeList[-1]}")
+                    print(f"Time for every move: {timeList}")
                 else:
                     print("Invalid move.")
                 continue
         moveList.append(inp)
 
-    gameType = input(
-        "\nEnter p for player vs computer, and c for computer vs computer: ").lower()
+    gameType = ""
     while gameType not in ["c", "p"]:
         gameType = input(
             "\nEnter p for player vs computer, and c for computer vs computer: ")
     if gameType == "c":
+        def cMove():
+            computerMove3()
+            print(getPGN(moveList, b))
+            if endCheck(b):
+                return False
+        
+        def result(wScore, bScore, board):
+            if board.result() == "1-0":
+                wScore += 1
+            elif board.result() == "0-1":
+                bScore += 1
+            elif board.result() == "1/2-1/2":
+                wScore += 0.5
+                bScore += 0.5
+            else:
+                raise ValueError("board.result returned unexpected value")
+            return wScore, bScore
         times = int(input("How many times do you want them to play? "))
-        score1, score2 = 0, 0
-        if times == 1:
-            inOpening = True
-            moveList = []
-            while True:
-                computerMove2()
-                if endCheck(b):
-                    break
-                print(getPGN(moveList, b))
-                computerMove2()
-                if endCheck(b):
-                    break
-                print(getPGN(moveList, b))
-            if b.result() == "1-0":
-                score1 += 1
-            elif b.result() == "0-1":
-                score2 += 1
-            elif b.result() == "1/2-1/2":
-                score1 += 0.5
-                score2 += 0.5
-            else:
-                raise ValueError("board.result returned unexpected value")
-            print("Computer 1: " + str(score1) +
-                  ", Computer 2: " + str(score2))
-            gamesList.append(getPGN(moveList, b))
-            print(gamesList)
-        for i in range(times//2):
-            inOpening = True
-            moveList = []
-            while True:
-                computerMove2()
-                if endCheck(b):
-                    break
-                print(getPGN(moveList, b))
-                computerMove2()
-                if endCheck(b):
-                    break
-                print(getPGN(moveList, b))
-            if b.result() == "1-0":
-                score1 += 1
-            elif b.result() == "0-1":
-                score2 += 1
-            elif b.result() == "1/2-1/2":
-                score1 += 0.5
-                score2 += 0.5
-            else:
-                raise ValueError("board.result returned unexpected value")
-            print("Computer 1: " + str(score1) +
-                  ", Computer 2: " + str(score2))
-            gamesList.append(getPGN(moveList, b))
-            print(gamesList)
-
+        wScore, bScore = 0, 0
+        for i in range(times):
             b.reset()
-            moveList = []
             inOpening = True
+            moveList = []
             while True:
-                computerMove2()
-                if endCheck(b):
+                if cMove() == False:
                     break
-                print(getPGN(moveList, b))
-                computerMove2()
-                if endCheck(b):
-                    break
-                print(getPGN(moveList, b))
-            if b.result() == "1-0":
-                score1 += 1
-            elif b.result() == "0-1":
-                score2 += 1
-            elif b.result() == "1/2-1/2":
-                score1 += 0.5
-                score2 += 0.5
-            else:
-                raise ValueError("board.result returned unexpected value")
-            print("Computer 1: " + str(score1) +
-                  ", Computer 2: " + str(score2))
-            b.reset()
+            wScore, bScore = result(wScore, bScore, b)
+            print("Computer 1: " + str(wScore) +
+                  ", Computer 2: " + str(bScore))
             gamesList.append(getPGN(moveList, b))
             print(gamesList)
 
     elif gameType == "p":
         print("Starting Game:\n", symbolPrint(b))
-        if computerColor == starting:  # white and white to play or black and black to play
-            inOpening = True
-            while True:
-                computerMove2()
-                if endCheck(b):
-                    break
-                print(getPGN(moveList, b))
+        def white():
+            if computerColor == "w":
+                computerMove3()
+            else:
                 humanMove()
-                if endCheck(b):
-                    break
-                print(getPGN(moveList, b))
-        else:
-            inOpening = True
-            while True:
+            print(getPGN(moveList, b))
+            if endCheck(b):
+                return False
+        def black():
+            if computerColor == "b":
+                computerMove3()
+            else:
                 humanMove()
-                if endCheck(b):
-                    break
-                print(getPGN(moveList, b))
-                computerMove2()
-                if endCheck(b):
-                    break
-                print(getPGN(moveList, b))
+            print(getPGN(moveList, b))
+            if endCheck(b):
+                return False
+        if starting == "w":  # white to play
+            inOpening = True
+            white()
+        while True: #black to play goes to this
+            if black() == False:
+                break
+            if white() == False:
+                break
         print(end(b) + " wins!")
         print(timeList)
         print(getPGN(moveList, b))
 
-
-masterTree = {}
-board1 = Board()
-playAgainstPlayer("b", board1, masterTree)
+if __name__ == "__main__":
+    print(getBoardfromPGN("1. e4 Nf6 2. e5 Nc6 3. exf6 exf6 4. Nf3 d5 5. Be2 Bd6 6. O-O O-O 7. d3 Be6 8. Nbd2 Ne5 9. b3 Nxd3 10. cxd3 f5 11. Ne5 Bxe5 12. Ba3 Bxa1 13. Bxf8 Qxf8 14. Qxa1 Qd6 15. Nf3 f4 16. Ne5 Qxe5 17. Qxe5 f3 18. Bxf3 Re8 19. Rc1 d4 20. Bg4"))
+    masterTree = {}
+    board1 = Board()
+    playAgainstPlayer("b", board1, masterTree)
 
 
 '''
