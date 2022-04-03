@@ -13,11 +13,8 @@ def returnBoard(move, board):
 
 
 def createBoardTree(board):
-    boardTree = {}
     legalMoves = list(board.legal_moves)
-    for i in legalMoves:
-        boardTree[i] = returnBoard(i, board)
-    return boardTree
+    return {i: returnBoard(i, board) for i in legalMoves}
 
 
 def boardToString(board):
@@ -51,7 +48,7 @@ def symPrint(board):
         elif symbol == "/":
             outputList.append("/")
         else:  # symbol is a number and represents blank spaces
-            for x in range(int(symbol)):
+            for _ in range(int(symbol)):
                 outputList.append(u"\u3000")
     return " " + "\n".join((" ".join(outputList)).split("/"))
 
@@ -140,8 +137,7 @@ def openingMove(board):
         board.push(move)
     outputList.reverse()
     moves = " ".join(outputList)
-    print(moves)
-    if moves in [key for key in oliOpen.keys()]:
+    if moves in list(oliOpen.keys()):
         # dictionary lookup
         return [board.parse_san(x) for x in oliOpen[moves]]
     else:
@@ -153,7 +149,7 @@ def getPGN(moveList, board):
     output = []
     for index, move in enumerate(moveList):
         if index % 2 == 0:  # index is even (white's move)
-            output.append(str(int(index/2 + 1)) + ".")
+            output.append(f'{int(index/2 + 1)}.')
         output.append(move)
     return " ".join(output)
 
@@ -211,8 +207,7 @@ def checkMaterial(board):
     listBoard = []
     for space in boardToParseableBoard(board).split(" ")[0]:
         if space in ['1', '2', '3', '4', '5', '6', '7', '8']:
-            for x in range(int(space)):
-                listBoard.append(" ")
+            listBoard.extend(" " for _ in range(int(space)))
         else:
             listBoard.append(space)
     whiteMaterial = 0
@@ -228,10 +223,7 @@ def checkMaterial(board):
 
 def checkIfEndgame(board):
     w, b = checkMaterial(board)
-    if w <= 13 or b >= -13:
-        return True
-    else:
-        return False
+    return w <= 13 or b >= -13
 
 
 def positionEvaluation(piece, pos, isEndgame):
@@ -333,14 +325,75 @@ def isCapture(board, move):
     b = Board(boardToParseableBoard(board))
     b.push(move)
     w2, b2 = checkMaterial(b)
-    if w1 == w2 and b1 == b2:
-        return False
-    else:
-        return True
+    return w1 != w2 or b1 != b2
 
 
 inOpening = True
 moveProgress = []
+
+
+def evaluateDeep0(board, depth, tree, capture=False):
+    capture = False
+    global inOpening
+    if inOpening:
+        oMove = openingMove(board)
+        if oMove != False:
+            return [(choice(oMove), 0)]
+        else:
+            inOpening = False
+    if board.is_game_over():
+        if board.result() == "1/2-1/2":
+            return [("", 0)]  # drawn evaluation
+        else:
+            if board.turn:
+                return [("", float('-inf'))]
+            else:
+                return [("", float('inf'))]
+    if depth == 0 and capture != True:
+        if boardToString(board) in tree:
+            return tree[boardToString(board)][1]
+        else:
+            return [("", evaluate(board))]
+    outputList = {}
+    boardTree = createBoardTree(board)
+    randomMove = choice([a for a in boardTree])
+    if depth == 0 and capture == True:
+        highestPairs = [(randomMove, float(evaluateDeep(
+            boardTree[randomMove], depth, tree)[0][1]))]
+    else:
+        highestPairs = [(randomMove, float(evaluateDeep(
+            boardTree[randomMove], depth-1, tree)[0][1]))]
+    evalList = []
+    for move in boardTree:
+        ##        condition = True
+        if board.turn:
+            condition = float(evaluate(boardTree[move])) > float(
+                evaluate(board))
+        else:
+            condition = float(evaluate(boardTree[move])) < float(
+                evaluate(board))
+        if condition:
+            boardState = boardTree[move]
+            captureBool = isCapture(board, move)
+            if depth == 0 and capture == True:
+                evaluation = float(evaluateDeep(
+                    boardState, depth, tree, capture=captureBool)[0][1])
+            else:
+                evaluation = float(evaluateDeep(
+                    boardState, depth-1, tree, capture=captureBool)[0][1])  # recursion
+            evalList.append(evaluation)
+            highestVal = highestPairs[0][1]
+            if evaluation == highestVal and move not in [highestPairs[x][0] for x in range(0, len(highestPairs))]:
+                highestPairs.append((move, evaluation))
+            else:
+                if board.turn:
+                    if evaluation > highestVal:
+                        highestPairs = [(move, evaluation)]
+                else:
+                    if evaluation < highestVal:
+                        highestPairs = [(move, evaluation)]
+    tree[boardToString(board)] = [boardTree, highestPairs]
+    return highestPairs
 
 
 def evaluateDeep(board: Board, depth: int, tree: dict, capture=False):
@@ -549,15 +602,79 @@ def evaluateDeep3(board: Board, depth: int, forcing=False, alpha=float('-inf'), 
         return evaluation, bestMove
 
 
+def evaluateDeep4(board: Board, depth, tree, inOpening=False, alpha=float("-inf"), beta=float("inf"), maximising=True):
+    # FIXME: plays a pretty bad move tbh
+    if inOpening:
+        oMove = openingMove(board)
+        if oMove != False:
+            return 0, choice(oMove)
+        else:
+            inOpening = False
+    if board.is_game_over():
+        if board.result() == "1/2-1/2":
+            return 0, ""  # draw
+        elif board.turn:
+            return float('-inf'), ""  # black wins
+        else:
+            return float('inf'), ""  # white wins
+    if depth == 0:
+        return evaluate(board), ""
+    if maximising:  # computer to move
+        maxEval = float("-inf")
+        bestMove = ""
+        boardTree = createBoardTree(board)
+        for move in boardTree:
+            evaluation, newmove = evaluateDeep4(
+                boardTree[move], depth - 1, tree, inOpening, alpha, beta, False)
+            if evaluation > maxEval:
+                maxEval = evaluation
+                bestMove = move
+            alpha = max(alpha, evaluation)
+            if beta <= alpha:
+                break  # prune
+        return evaluation, bestMove
+    # player to move
+    minEval = float("inf")
+    bestMove = ""
+    boardTree = createBoardTree(board)
+    for move in boardTree:
+        evaluation, newmove = evaluateDeep4(
+            boardTree[move], depth - 1, tree, inOpening, alpha, beta, True)
+        if evaluation < minEval:
+            minEval = evaluation
+            bestMove = move
+        beta = min(beta, evaluation)
+        if beta <= alpha:
+            break  # prune the tree, better option somewhere else
+    return evaluation, bestMove
+
+
+def evaluateThisv1(board, tree):
+    moves = evaluateDeep0(board, 2, tree)
+    if moves != None:
+        move, evaluation = choice(moves)
+        print(moves)
+        return evaluation, move
+
+
 def evaluateThisv2(board, tree):
-    return evaluateDeep2(board, 2, tree)
+    moves = evaluateDeep2(board, 2, tree)
+    if moves != None:
+        move, evaluation = choice(moves)
+        print(moves)
+        return evaluation, move
 
 
-def evaluateThisv1(board, tree):  # not working yet
+def evaluateThisv3(board, tree):  # not working yet
     return evaluateDeep3(board, 2)
 
 
-def playAgainstPlayer(computerColor, startingBoard, tree):
+def evaluateThisv4(board, tree, inOpening):
+    return evaluateDeep4(board, 2, tree, inOpening, maximising=board.turn)
+
+
+def playAgainstPlayer(computerColor="w", startingBoard=Board, tree={}):
+    global outputBoard
     moveList = []
     timeList = []
     gamesList = []
@@ -571,30 +688,28 @@ def playAgainstPlayer(computerColor, startingBoard, tree):
         return board.is_game_over()
 
     def end(board: Board):
-        losingPlayer = board.turn  # returns True for white, False for black
-        if losingPlayer:  # white loses
-            return "Black"
-        else:  # black loses
-            return "White"
+        if board.is_game_over:
+            if board.result() == "1/2-1/2":
+                return "Draw"
+            return "Black wins" if board.turn else "White wins"
 
     def computerMove3():  # new version
         start = time()
         move = ""
         while True:
             try:
-                a = evaluateThisv1(b, t)
+                a = evaluateThisv4(b, t, inOpening)
                 if a != None:
                     evaluation, move = a
                     break
             except ValueError:
-                print("Invalid move.")
-                print(move)
+                print(f"Invalid move: {move} in board {b}")
                 continue
         print(b.san(move))
         moveList.append(b.san(move))
         b.push(move)
         end = time()
-        timeList.append(end - start)
+        timeList.append(round(end - start, 3))
         print(symbolPrint(b), move, evaluation, timeList[-1], "\n")
 
     def humanMove():
@@ -629,7 +744,7 @@ def playAgainstPlayer(computerColor, startingBoard, tree):
             print(getPGN(moveList, b))
             if endCheck(b):
                 return False
-        
+
         def result(wScore, bScore, board):
             if board.result() == "1-0":
                 wScore += 1
@@ -651,13 +766,13 @@ def playAgainstPlayer(computerColor, startingBoard, tree):
                 if cMove() == False:
                     break
             wScore, bScore = result(wScore, bScore, b)
-            print("Computer 1: " + str(wScore) +
-                  ", Computer 2: " + str(bScore))
+            print(f"Computer 1: {wScore} Computer 2: {bScore}")
             gamesList.append(getPGN(moveList, b))
             print(gamesList)
 
     elif gameType == "p":
-        print("Starting Game:\n", symbolPrint(b))
+        print(f"Starting Game:\n{symbolPrint(b)}")
+
         def white():
             if computerColor == "w":
                 computerMove3()
@@ -666,6 +781,7 @@ def playAgainstPlayer(computerColor, startingBoard, tree):
             print(getPGN(moveList, b))
             if endCheck(b):
                 return False
+
         def black():
             if computerColor == "b":
                 computerMove3()
@@ -677,21 +793,25 @@ def playAgainstPlayer(computerColor, startingBoard, tree):
         if starting == "w":  # white to play
             inOpening = True
             white()
-        while True: #black to play goes to this
+        while True:  # black to play goes to this
             if black() == False:
                 break
             if white() == False:
                 break
-        print(end(b) + " wins!")
+        print(end(b))  # end message to show who won
         print(timeList)
         print(getPGN(moveList, b))
 
+
 if __name__ == "__main__":
     board1 = Board('4r1k1/ppp2ppp/4b3/4Q3/3p2B1/1P1P4/P4PPP/2R3K1 b - - 1 20')
-    board2 = Board('rnbqkb1r/pppppppp/5n2/8/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 2 2')
+    board2 = Board(
+        'rnbqkb1r/pppppppp/5n2/8/4P3/2N5/PPPP1PPP/R1BQKBNR b KQkq - 2 2')
     masterTree = {}
-    playAgainstPlayer("b", board2, masterTree)
+    playAgainstPlayer("b", Board(), masterTree)
 
+outputBoard = ""
+BOARD = Board()
 
 '''
 [Event "FyreChess Plays Against Itself"]
