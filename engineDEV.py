@@ -4,9 +4,7 @@
 from time import time
 from datetime import datetime
 from chess import Board, Piece
-import chess.svg
 from random import choice
-import gui_tkinter
 
 
 def returnBoard(move, board):
@@ -602,7 +600,7 @@ Logging games in text file
 Created heuristic move ordering function to improve efficiency (orderBoardTree)
 Added function to allow search to continue with certain conditions (continueSearch)
 Added custom depth for the engine
-Started tkinter display (display.py)
+Started html display with flask, ajax (app.py, index.html)
 '''
 
 # Additions in 1.3.1

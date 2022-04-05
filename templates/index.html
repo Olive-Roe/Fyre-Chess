@@ -17,7 +17,11 @@
         xhttp.open("GET", "../app.py");
         xhttp.send();
       }
-      loadScreen();
+      function refresh() {
+        loadScreen();
+        setTimeout(refresh, 1000);
+      }
+      setTimeout(refresh, 1000);
     </script>
   </body>
 </html>
