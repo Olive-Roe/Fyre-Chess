@@ -633,7 +633,7 @@ Logging games in text file
 Created heuristic move ordering function to improve efficiency (orderBoardTree)
 Added function to allow search to continue with certain conditions (continueSearch)
 Added custom depth for the engine
-Started html display with flask, ajax (app.py, index.html)
+Created web display with html, flask
 '''
 
 # Additions in 1.3.1

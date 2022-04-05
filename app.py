@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request
 import engineDEV
-import chess.svg
 import threading
 import os
-import random
 
 app = Flask(__name__)
 outputBoard = engineDEV.outputBoard
