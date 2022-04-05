@@ -3,14 +3,14 @@ import engineDEV
 import chess.svg
 import threading
 import os
+import random
 
 app = Flask(__name__)
-b = engineDEV.BOARD
 outputBoard = engineDEV.outputBoard
 
 
 def runGame():
-    os.system("python3 -m engineDEV.py")
+    os.system("python3 -m engineDEV")
 
 
 def start_flask_app():
@@ -25,7 +25,17 @@ t2.start()
 
 @app.route("/")
 def index():
-    if request.method == 'GET':  # displaying board
-        return chess.svg.board(b, size=600)
-    else:  # loading page
-        return render_template("index.html", board=chess.svg.board(b, size=600))
+    with open("logfiles/xmlboard.txt", "r") as f:
+        svg = f.read()
+    with open("logfiles/livePGN.txt", "r") as f:
+        pgn = f.read()
+    with open("logfiles/evaluation.txt", "r") as f:
+        currentEval = f.read()
+    return render_template("index.html", board=svg, livePGN=pgn, evaluation=currentEval)
+
+
+@app.route("/xmlboard.txt")
+def index():
+    if request.method == "GET":
+        with open("logfiles/xmlboard.txt", "r") as f:
+            return f.read()

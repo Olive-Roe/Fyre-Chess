@@ -4,6 +4,7 @@
 from time import time
 from datetime import datetime
 from chess import Board, Piece
+import chess.svg
 from random import choice
 
 
@@ -425,7 +426,7 @@ def formatPGN(pgn, player1, player2, result, roundnumber="?"):
 
 
 def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
-    global outputBoard
+    global b
     moveList = []
     timeList = []
     gamesList = []
@@ -435,6 +436,15 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
     move = ""
     inOpening = True
     starting = giveTurnColor(startingBoard)
+
+    def updateFiles(evaluation):
+        with open("logfiles/xmlboard.txt", "w") as f:
+            f.write(chess.svg.board(b, size=600))
+        with open("logfiles/livePGN.txt", "w") as f:
+            f.write(getPGN(moveList, b))
+        with open("logfiles/evaluation.txt", "w") as f:
+            f.write(str(evaluation))
+        
 
     def endCheck(board: Board):
         return board.is_game_over()
@@ -469,6 +479,7 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
         timeList.append(round(end - start, 3))
         print(
             f"{symbolPrint(b)} \nMove: {b2.san(move)}\nEval: {evaluation}\nTime taken: {timeList[-1]}\n")
+        return evaluation
 
     def humanMove():
         while True:
@@ -499,10 +510,11 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
             "\nEnter p for player vs computer, and c for computer vs computer: ")
     if gameType == "c":
         def cMove(depth=2):
-            computerMove(depth)
+            evaluation = computerMove(depth)
             print(getPGN(moveList, b))
             if endCheck(b):
-                return False
+                return "end"
+            return evaluation
 
         def result(wScore, bScore, board):
             if board.result() == "1-0":
@@ -513,20 +525,24 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
                 wScore += 0.5
                 bScore += 0.5
             else:
-                raise ValueError("board.result returned unexpected value")
+                raise ValueError(f"Board: {board} board.result returned unexpected value")
             return wScore, bScore
         times = int(input("How many times do you want them to play? "))
         wScore, bScore = 0, 0
-        wDepth, bDepth = 2, 3
+        wDepth, bDepth = 2, 2
         for i in range(times):
             b.reset()  # white will always go first here
             inOpening = True
             moveList = []
             while True:
-                if cMove(wDepth) == False:
+                wEval = cMove(wDepth)
+                if wEval == "end":
                     break
-                if cMove(bDepth) == False:
+                updateFiles(wEval)
+                bEval = cMove(bDepth)
+                if bEval == "end":
                     break
+                updateFiles(bEval)
             wScore, bScore = result(wScore, bScore, b)
             print(f"Computer 1: {wScore} Computer 2: {bScore}")
             currentPGN = getPGN(moveList, b)
@@ -534,7 +550,7 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
             currentFormattedPGN = formatPGN(
                 currentPGN, f"FC 1.3.2 (depth {wDepth})", f"FC 1.3.2 (depth {bDepth})", b.result(), i+1)
             pgn += currentFormattedPGN
-            with open("gamelog.txt", "a") as f:
+            with open("logfiles/gamelog.txt", "a") as f:
                 f.write(currentFormattedPGN)
             print(gamesList)
             print(pgn)
@@ -544,35 +560,52 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
 
         def white():
             if computerColor == "w":
-                computerMove()
+                evaluation = computerMove()
             else:
                 humanMove()
             print(getPGN(moveList, b))
             if endCheck(b):
-                return False
+                return "end"
+            return evaluation
 
         def black():
             if computerColor == "b":
-                computerMove()
+                evaluation = computerMove()
             else:
                 humanMove()
             print(getPGN(moveList, b))
             if endCheck(b):
-                return False
+                return "end"
+            return evaluation
         if starting == "w":  # white to play
             inOpening = True
             white()
         while True:  # black to play goes to this
-            if black() == False:
+            blackEval = black()
+            if blackEval == "end":
                 break
-            if white() == False:
+            updateFiles(blackEval)
+            whiteEval = white()
+            if whiteEval == "end":
                 break
+            updateFiles(whiteEval)
         print(end(b))  # end message to show who won
         print(timeList)
         print(getPGN(moveList, b))
+        currentPGN = getPGN(moveList, b)
+        gamesList.append(currentPGN)
+        wPlayer = "Human" if computerColor == "b" else "Computer"
+        bPlayer = "Human" if computerColor == "w" else "Computer"
+        currentFormattedPGN = formatPGN(
+            currentPGN, wPlayer, bPlayer, b.result())
+        pgn += currentFormattedPGN
+        with open("logfiles/gamelog.txt", "a") as f:
+            f.write(currentFormattedPGN)
+        print(gamesList)
+        print(pgn)
 
-
-outputBoard = ""
+b = Board()
+outputBoard = Board()
 BOARD = Board()
 
 if __name__ == "__main__":
