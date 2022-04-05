@@ -583,7 +583,8 @@ if __name__ == "__main__":
     # for test in blackTestCases:
     #     print(test)
     #     playAgainstPlayer("b", Board(blackTestCases[test]), masterTree)
-    playAgainstPlayer("b", Board(), masterTree)
+    # playAgainstPlayer("b", Board(), masterTree)
+    
 
 outputBoard = ""
 BOARD = Board()
