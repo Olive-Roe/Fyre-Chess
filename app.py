@@ -1,14 +1,19 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import engineDEV
-from chess import Board
+import chess.svg
 app = Flask(__name__)
-
 b = engineDEV.BOARD
 outputBoard = engineDEV.outputBoard
-engineDEV.playAgainstPlayer(startingBoard=b)
 
 
 @app.route("/")
 def index():
-    global b
-    return render_template("index.html", board=b.fen())
+    if request.method == 'GET':  # displaying board
+        return chess.svg.board(b, size=600)
+    else:  # loading page
+        return render_template("index.html", board=chess.svg.board(b, size=600))
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+    engineDEV.playAgainstPlayer(startingBoard=b)

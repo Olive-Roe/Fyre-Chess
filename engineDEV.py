@@ -4,7 +4,9 @@
 from time import time
 from datetime import datetime
 from chess import Board, Piece
+import chess.svg
 from random import choice
+import gui_tkinter
 
 
 def returnBoard(move, board):
@@ -572,6 +574,9 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
         print(getPGN(moveList, b))
 
 
+outputBoard = ""
+BOARD = Board()
+
 if __name__ == "__main__":
     # whiteTestCases = {}
     # blackTestCases = {"bishop for mate?": '4r1k1/ppp2ppp/4b3/4Q3/3p2B1/1P1P4/P4PPP/2R3K1 b - - 1 20',
@@ -584,10 +589,10 @@ if __name__ == "__main__":
     #     print(test)
     #     playAgainstPlayer("b", Board(blackTestCases[test]), masterTree)
     # playAgainstPlayer("b", Board(), masterTree)
-    
+    # svg = chess.svg.board(Board())
+    # gui_tkinter.refreshScreen(svg)
+    playAgainstPlayer("b", BOARD, masterTree)
 
-outputBoard = ""
-BOARD = Board()
 # Additions in 1.3.2
 '''
 Using new search function with alpha-beta pruning (evaluateDeep4)
