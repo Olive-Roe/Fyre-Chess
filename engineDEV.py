@@ -444,7 +444,6 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
             f.write(getPGN(moveList, b))
         with open("logfiles/evaluation.txt", "w") as f:
             f.write(str(evaluation))
-        
 
     def endCheck(board: Board):
         return board.is_game_over()
@@ -525,7 +524,8 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
                 wScore += 0.5
                 bScore += 0.5
             else:
-                raise ValueError(f"Board: {board} board.result returned unexpected value")
+                raise ValueError(
+                    f"Board: {board} board.result returned unexpected value")
             return wScore, bScore
         times = int(input("How many times do you want them to play? "))
         wScore, bScore = 0, 0
@@ -604,6 +604,7 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
         print(gamesList)
         print(pgn)
 
+
 b = Board()
 outputBoard = Board()
 BOARD = Board()
@@ -624,8 +625,18 @@ if __name__ == "__main__":
     # gui_tkinter.refreshScreen(svg)
     playAgainstPlayer("b", BOARD, masterTree)
 
+# To-do List
+'''
+Format text box in index.html better, allow word wrap (https://stackoverflow.com/questions/14819574/preserve-normal-word-wrapping-inside-absolutely-positioned-container might help)
+Create input for the player in index.html, process with turbo-flask and play it in the server
+Create display to see the engine's current & best moves (thought process), write to file from server and display with turbo-flask
+Use CSS to make everything beautiful
+Decide when version 1.3.2 is finished and update engine.py to v1.3.2 (follow incompatible.compatible features.compatible fixes)?
+'''
+
 # Additions in 1.3.2
 '''
+Delete and improve old functions (some Sourcery refactorings as well)
 Using new search function with alpha-beta pruning (evaluateDeep4)
 Better output formatting
 Added export PGN formatting (formatPGN)
@@ -633,7 +644,7 @@ Logging games in text file
 Created heuristic move ordering function to improve efficiency (orderBoardTree)
 Added function to allow search to continue with certain conditions (continueSearch)
 Added custom depth for the engine
-Created web display with html, flask
+Created auto-updating web display with html, flask, turbo-flask
 '''
 
 # Additions in 1.3.1

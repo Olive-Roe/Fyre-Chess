@@ -31,40 +31,5 @@
       <p id="eval"></p>
       <h3>What do you move?</h3>
     </div>
-    <script>
-      function loadDoc() {
-        const xhttp = new XMLHttpRequest();
-        xhttp.onload = function () {
-          console.log(this.responseText);
-          document.getElementById("board").innerHTML = this.responseText;
-        };
-        xhttp.open("GET", "/xmlboard.txt");
-        xhttp.send();
-      }
-      function loadDoc2() {
-        const reader = new FileReader();
-        reader.addEventListener(
-          "load",
-          () => {
-            console.log(reader.result);
-            document.getElementById("board").innerHTML = reader.result;
-          },
-          false
-        );
-        const file = new File(
-          [],
-          "/Users/alan/Desktop/Wawa Documents/Personal/Coding Projects/FyreChess/FyreChess Engine/xmlboard.txt"
-        );
-        reader.readAsText(file);
-      }
-      function reload() {
-        location.reload();
-      }
-      function refresh() {
-        loadDoc();
-        setTimeout(refresh, 1000);
-      }
-      // refresh();
-    </script>
   </body>
 </html>
