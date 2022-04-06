@@ -32,6 +32,12 @@ def update():
                 pgn, 'pgn'), turbo.update(currentEval, 'eval')])
 
 
+def clear_tempfiles():
+    open('logfiles/evaluation.txt', 'w').close()
+    open('logfiles/livePGN.txt', 'w').close()
+    open('logfiles/xmlboard.txt', 'w').close()
+
+
 @app.route("/")
 def index():
     # return render_template("index.html", board=svg, livePGN=pgn, evaluation=currentEval)
@@ -45,6 +51,7 @@ def xmlboard():
             return f.read()
 
 
+clear_tempfiles()
 t1 = threading.Thread(target=runGame)
 t2 = threading.Thread(target=start_flask_app)
 t3 = threading.Thread(target=update)
