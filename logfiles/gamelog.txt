@@ -176,3 +176,33 @@
 
 1. d4 Nf6 2. Bf4 Nc6 3. Nf3 d5 4. Nc3 e5 5. dxe5 Nd7 6. Nxd5 Bc5 7. e4 Rg8 8. e6 fxe6 9. Nc3 Qf6 10. Bxc7 h6 11. Bc4 Kf7 12. Bxe6+ Qxe6 13. a4 Qc4 14. a5 Nf6 15. Bf4 h5 16. Ng5+ Ke8 17. Qf3 Nd4 18. Qe3 Nxc2+ 19. Kd1 Nxe3+ 20. Bxe3 Bxe3 21. fxe3 Bg4+ 22. Kd2 Kf8 23. e5 Rd8+ 24. Kc1 Nd5 25. Nh7+ Ke8 26. Nf6+ gxf6 27. exf6 Nxf6 28. Re1 Nd5 29. e4 Nxc3 30. bxc3 Qxc3+ 31. Kb1 Qxe1+ 32. Kb2 Qxe4 33. Rg1 Qc4 34. Re1+ Kf7 35. Ka3 Kf6 36. Kb2 Rd2+ 37. Kb1 Rxg2 38. h4 Qc2+ 39. Ka1 Qb2#
 
+[Event "?"]
+[Site "?"]
+[Date "2022.04.07"]
+[Round "?"]
+[White "Human"]
+[Black "Computer"]
+[Result "1-0"]
+
+1. e4 c5 2. d4 cxd4 3. Nf3 Qa5+ 4. Bd2 Qc7 5. Nxd4 Nf6 6. Nc3 e5 7. N4e2 Nc6 8. g3 d6 9. Bg2 Be6 10. O-O O-O-O 11. Bg5 Bxa2 12. Rxa2 d5 13. exd5 Bd6 14. Rxa7 Nxa7 15. Qa1 Nc6 16. Bh3 Kb8 17. Qa2 e4 18. Ra1 Qb6 19. dxc6 Qxc6 20. Qa7 Kc7 21. Bxf6 gxf6 22. Nd5 Qxd5 23. c4 Qxc4 24. Rc1 Qxc1+ 25. Nxc1 Rhe8 26. Ne2 h6 27. Qa5 Kb8 28. b4 Be5 29. b5 Rd1+ 30. Kg2 Rdd8 31. b6 f5 32. Bxf5 Rd7 33. Bxd7 Bxg3 34. Qa7
+
+[Event "?"]
+[Site "?"]
+[Date "2022.04.07"]
+[Round "?"]
+[White "Human"]
+[Black "FC 1.3.2 (depth {depth})"]
+[Result "0-1"]
+
+1. e4 d5 2. e5 Nc6 3. Nf3 e6 4. d4 Nge7 5. Bd3 h5 6. b3 Bd7 7. c4 dxc4 8. bxc4 a6 9. a4 Rg8 10. Bb2 Rh8 11. Nc3 Rg8 12. Qb3 h4 13. h3 b6 14. d5 exd5 15. cxd5 Na5 16. Qa2 Nb7 17. O-O Nc5 18. Be4 Nxe4 19. Nxe4 Nf5 20. Nfg5 Bb4 21. Rad1 Kf8 22. d6 Nh6 23. Ba3 Bxa3 24. Qa3 cxd6 25. Nxd6 Qxg5 26. Nc8 Ke8 27. Rxd7 Kxd7 28. Qd6 Kxc8 29. Rc1 Qxc1+ 30. Kh2 Qf4+ 31. g3 Qxf2+ 32. Kh1 Qf3+ 33. Kg1 Qxg3+ 34. Kf1 Qxh3+ 35. Ke2 Qg4+ 36. Ke3 Nf5+ 37. Kf2 Nxd6 38. exd6 Qxa4 39. Kg2 Qf4 40. d7 Kxd7 41. Kh1 Ke6 42. Kg2 Ke5 43. Kg1 h3 44. Kh1 h2 45. Kg2 Rh8 46. Kh1 Qe4#
+
+[Event "?"]
+[Site "?"]
+[Date "2022.04.07"]
+[Round "?"]
+[White "Human"]
+[Black "FC 1.3.2 (depth 2)"]
+[Result "1-0"]
+
+1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 d5 5. exd5 Qxd5 6. Nc3 Qe6 7. O-O Kd7 8. Re1 Nf6 9. Nxe5 Ke8 10. Nxc6 bxc6 11. Bxc6 Bd7 12. Rxe6 fxe6 13. Bxa8 e5 14. Nd5 Nxd5 15. Bxd5 Bd6 16. d4 exd4 17. Qh5 Kd8 18. Bg5 Kc8 19. Re1 Kb8 20. Qf7 Bg4 21. h3 Bc8 22. Be7 Bxe7 23. Rxe7 Rd8 24. Be4 h6 25. Rxc7 g5 26. Ra7 Bd7 27. Rxd7 Rxd7 28. Qxd7 h5 29. Qb7
+

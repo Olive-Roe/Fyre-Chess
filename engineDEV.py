@@ -557,36 +557,39 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
 
     elif gameType == "p":
         print(f"Starting Game:\n{symbolPrint(b)}")
-
+        depth = 2
         def white():
             if computerColor == "w":
-                evaluation = computerMove()
+                evaluation = computerMove(depth)
             else:
                 humanMove()
             print(getPGN(moveList, b))
             if endCheck(b):
                 return "end"
-            return evaluation
+            return evaluation if computerColor == "w" else "-"
 
         def black():
             if computerColor == "b":
-                evaluation = computerMove()
+                evaluation = computerMove(depth)
             else:
                 humanMove()
             print(getPGN(moveList, b))
             if endCheck(b):
                 return "end"
-            return evaluation
+            return evaluation if computerColor == "b" else "-"
+
         if starting == "w":  # white to play
             inOpening = True
             white()
         while True:  # black to play goes to this
             blackEval = black()
             if blackEval == "end":
+                updateFiles(blackEval)
                 break
             updateFiles(blackEval)
             whiteEval = white()
             if whiteEval == "end":
+                updateFiles(whiteEval)
                 break
             updateFiles(whiteEval)
         print(end(b))  # end message to show who won
@@ -594,8 +597,8 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
         print(getPGN(moveList, b))
         currentPGN = getPGN(moveList, b)
         gamesList.append(currentPGN)
-        wPlayer = "Human" if computerColor == "b" else "Computer"
-        bPlayer = "Human" if computerColor == "w" else "Computer"
+        wPlayer = "Human" if computerColor == "b" else f"FC 1.3.2 (depth {depth})"
+        bPlayer = "Human" if computerColor == "w" else f"FC 1.3.2 (depth {depth})"
         currentFormattedPGN = formatPGN(
             currentPGN, wPlayer, bPlayer, b.result())
         pgn += currentFormattedPGN
