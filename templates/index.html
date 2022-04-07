@@ -18,18 +18,25 @@
     <div
       id="text"
       style="
+        position: relative;
+        left: -350px;
         float: right;
-        word-wrap: break-text;
+        word-wrap: break-word;
         vertical-align: top;
         margin-left: 5px;
+        text-align: left;
       "
     >
       <h1>Chess Engine (v1.3.2)</h1>
-      <h2>Moves so far (pgn):</h2>
-      <p id="pgn"></p>
-      <p>Current evaluation:</p>
-      <p id="eval"></p>
+      <p>Current evaluation: <em id="eval"></em></p>
       <h3>What do you move?</h3>
+      <div
+        id="wrapper"
+        style="position: absolute; max-width: 700px; float: left"
+      >
+        <h3>Moves so far (pgn):</h3>
+        <p id="pgn" style="position: relative"></p>
+      </div>
     </div>
   </body>
 </html>

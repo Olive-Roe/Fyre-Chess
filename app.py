@@ -21,7 +21,7 @@ def start_flask_app():
 def update():
     with app.app_context():
         while True:
-            sleep(1)
+            sleep(0.25)
             with open("logfiles/xmlboard.txt", "r") as f:
                 svg = f.read()
             with open("logfiles/livePGN.txt", "r") as f:

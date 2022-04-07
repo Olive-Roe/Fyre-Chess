@@ -627,7 +627,6 @@ if __name__ == "__main__":
 
 # To-do List
 '''
-Format text box in index.html better, allow word wrap (https://stackoverflow.com/questions/14819574/preserve-normal-word-wrapping-inside-absolutely-positioned-container might help)
 Create input for the player in index.html, process with turbo-flask and play it in the server
 Create display to see the engine's current & best moves (thought process), write to file from server and display with turbo-flask
 Use CSS to make everything beautiful
@@ -645,6 +644,7 @@ Created heuristic move ordering function to improve efficiency (orderBoardTree)
 Added function to allow search to continue with certain conditions (continueSearch)
 Added custom depth for the engine
 Created auto-updating web display with html, flask, turbo-flask
+Format text box in index.html better, allow word wrap
 '''
 
 # Additions in 1.3.1
