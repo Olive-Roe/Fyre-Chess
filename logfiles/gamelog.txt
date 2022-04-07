@@ -216,3 +216,33 @@
 
 1. d4 d5 2. c4 e6 3. cxd5 exd5 4. Nf3 Nf6 5. Nc3 Bb4 6. e3 Nc6 7. Bb5 Bxc3+ 8. bxc3 Be6 9. Bxc6+ bxc6 10. O-O O-O 11. Bb2 Ne4 12. c4 dxc4 13. Ne5 c5 14. d5 Bf5 15. Nxc4 g5 16. Qf3 Qxd5 17. Na5 c4 18. Nxc4 Qxc4 19. Qxf5 g4 20. Qxg4+ Ng5 21. Qxg5#
 
+[Event "?"]
+[Site "?"]
+[Date "2022.04.07"]
+[Round "?"]
+[White "Human"]
+[Black "FC 1.3.2 (depth 2)"]
+[Result "1-0"]
+
+1. e4 c5 2. Nf3 Nc6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 Nxd4 6. Qxd4 e5 7. Qxe5 Be7 8. Bg5 Nxe4 9. Nxe4 Kf8 10. Bc4 Bxg5 11. Nxg5 f6 12. Qf4 Qa5+ 13. c3 f5 14. Qxf5 Qxf5 15. O-O Qxg5 16. f4 Qc5+ 17. Rf2 Qxc4 18. Raf1 Qxa2 19. f5 d5 20. f5f6 gxf6 21. Rxf6 Kg8 22. h3 Qxb2 23. R1f3 Bd7 24. Rg3 Bg4 25. Rxg4
+
+[Event "?"]
+[Site "?"]
+[Date "2022.04.07"]
+[Round "?"]
+[White "Human"]
+[Black "FC 1.3.2 (depth 2)"]
+[Result "1-0"]
+
+1. e4 Nf6 2. d4 Nxe4 3. c4 Nc6 4. d5 Ne5 5. Qe2 Nxc4 6. Qxc4 Nd6 7. Qc2 e6 8. de6 dxe6 9. Nf3 Ke7 10. Bd3 h5 11. O-O Rg8 12. Nc3 Bd7 13. Re1 Bc6 14. Nd4 h4 15. Nxc6 bxc6 16. Bg5 f6 17. Bxh4 c5 18. Bc4 Nxc4 19. Qb3 e5 20. Qxc4 Rh8 21. Rxe5 Kd7 22. Qe6
+
+[Event "?"]
+[Site "?"]
+[Date "2022.04.07"]
+[Round "?"]
+[White "Human"]
+[Black "FC 1.3.2 (depth 2)"]
+[Result "1-0"]
+
+1. e4 d5 2. e5 Nc6 3. Nf3 e6 4. d4 Nge7 5. c4 dxc4 6. Bxc4 Kd7 7. Nc3 Nf5 8. d5 exd5 9. Nxd5 Bc5 10. e6 fxe6 11. Nc3 Nd6 12. O-O e5 13. Bg5 Qe8 14. Re1 Qg6 15. Rxe5 Nxe5 16. Nxe5 Ke8 17. Nxg6 hxg6 18. Qe2 Kd7 19. Rd1 Re8 20. Qg4 Kc6 21. Qf3 Kb6 22. Na4 Ka5 23. Qc3 Kxa4 24. b3 Ka3 25. Bc1 Kxa2 26. Qb2
+

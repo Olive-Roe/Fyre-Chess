@@ -9,6 +9,8 @@
       type="text/css"
       href="{{ url_for('static',filename='styles/style.css') }}"
     />
+    <script src="{{url_for('static', filename='scripts/script.js')}}"></script>
+
     {{ turbo() }}
     <title>FyreChess 1.3.2</title>
   </head>
@@ -33,8 +35,15 @@
       <h1>Chess Engine (v1.3.2)</h1>
       <p>Current evaluation: <em id="eval"></em></p>
       <h3>What do you move?</h3>
-      <form action="POST">
-        <input type="button" value="Enter your move" />
+      <form action="/move" method="post" id="moveInputForm">
+        <input
+          type="text"
+          name="pmove"
+          autocomplete="off"
+          id="moveInput"
+          autofocus
+        />
+        <button id="btn" type="submit">Play move</button>
       </form>
       <div
         id="wrapper"

@@ -7,8 +7,6 @@ from chess import Board, Piece
 import chess.svg
 from random import choice
 
-from app import update
-
 
 def returnBoard(move, board):
     b = Board(boardToParseableBoard(board))
@@ -447,6 +445,8 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
         with open("logfiles/evaluation.txt", "w") as f:
             f.write(str(evaluation))
 
+    updateFiles()
+
     def endCheck(board: Board):
         return board.is_game_over()
 
@@ -508,22 +508,22 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
     def getMove():
         # wait for input from client side
         while True:
-            with open("pmoveReady.txt", "r") as f:
+            with open("logfiles/pmoveReady.txt", "r") as f:
                 if f.read() == "True":
                     break
         # set move to not ready
-        with open("pMoveReady.txt", "w"):
+        with open("logfiles/pmoveReady.txt", "w") as f:
             f.write("False")
         # read move
-        with open("playermove.txt", "r") as f:
+        with open("logfiles/playermove.txt", "r") as f:
             sanMove = f.read()
         return sanMove
 
     def humanMoveFromHTML():
-        # runs loop until move is gotten
-        sanMove = getMove()
         # play move
         while True:
+            # runs loop until move is gotten
+            sanMove = getMove()
             try:
                 b.push_san(sanMove)
                 updateFiles()
@@ -537,7 +537,10 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
                     timeList.pop()
                     updateFiles()
                 else:
-                    print("Invalid move.")
+                    # clear current move
+                    with open("logfiles/playermove.txt", "w") as f:
+                        f.write("")
+                continue
         moveList.append(sanMove)
 
     gameType = ""
@@ -600,7 +603,7 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
             if computerColor == "w":
                 evaluation = computerMove(depth)
             else:
-                humanMove()
+                humanMoveFromHTML()
             print(getPGN(moveList, b))
             if endCheck(b):
                 return "end"
@@ -610,7 +613,7 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
             if computerColor == "b":
                 evaluation = computerMove(depth)
             else:
-                humanMove()
+                humanMoveFromHTML()
             print(getPGN(moveList, b))
             if endCheck(b):
                 return "end"
@@ -668,7 +671,6 @@ if __name__ == "__main__":
 
 # To-do List
 '''
-Create input for the player in index.html, process with turbo-flask and play it in the server
 Create display to see the engine's current & best moves (thought process), write to file from server and display with turbo-flask
 Use CSS to make everything beautiful
 Decide when version 1.3.2 is finished and update engine.py to v1.3.2 (follow incompatible.compatible features.compatible fixes)?
@@ -686,6 +688,7 @@ Added function to allow search to continue with certain conditions (continueSear
 Added custom depth for the engine
 Created auto-updating web display with html, flask, turbo-flask
 Format text box in index.html better, allow word wrap
+Create input for the player in index.html, process with flask and play it in the server
 '''
 
 # Additions in 1.3.1
