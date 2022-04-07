@@ -206,3 +206,13 @@
 
 1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 d5 5. exd5 Qxd5 6. Nc3 Qe6 7. O-O Kd7 8. Re1 Nf6 9. Nxe5 Ke8 10. Nxc6 bxc6 11. Bxc6 Bd7 12. Rxe6 fxe6 13. Bxa8 e5 14. Nd5 Nxd5 15. Bxd5 Bd6 16. d4 exd4 17. Qh5 Kd8 18. Bg5 Kc8 19. Re1 Kb8 20. Qf7 Bg4 21. h3 Bc8 22. Be7 Bxe7 23. Rxe7 Rd8 24. Be4 h6 25. Rxc7 g5 26. Ra7 Bd7 27. Rxd7 Rxd7 28. Qxd7 h5 29. Qb7
 
+[Event "?"]
+[Site "?"]
+[Date "2022.04.07"]
+[Round "1"]
+[White "FC 1.3.2 (depth 2)"]
+[Black "FC 1.3.2 (depth 2)"]
+[Result "1-0"]
+
+1. d4 d5 2. c4 e6 3. cxd5 exd5 4. Nf3 Nf6 5. Nc3 Bb4 6. e3 Nc6 7. Bb5 Bxc3+ 8. bxc3 Be6 9. Bxc6+ bxc6 10. O-O O-O 11. Bb2 Ne4 12. c4 dxc4 13. Ne5 c5 14. d5 Bf5 15. Nxc4 g5 16. Qf3 Qxd5 17. Na5 c4 18. Nxc4 Qxc4 19. Qxf5 g4 20. Qxg4+ Ng5 21. Qxg5#
+
