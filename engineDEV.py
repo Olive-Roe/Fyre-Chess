@@ -7,6 +7,8 @@ from chess import Board, Piece
 import chess.svg
 from random import choice
 
+from app import update
+
 
 def returnBoard(move, board):
     b = Board(boardToParseableBoard(board))
@@ -437,7 +439,7 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
     inOpening = True
     starting = giveTurnColor(startingBoard)
 
-    def updateFiles(evaluation):
+    def updateFiles(evaluation="-"):
         with open("logfiles/xmlboard.txt", "w") as f:
             f.write(chess.svg.board(b, size=600))
         with open("logfiles/livePGN.txt", "w") as f:
@@ -503,6 +505,41 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
                 continue
         moveList.append(inp)
 
+    def getMove():
+        # wait for input from client side
+        while True:
+            with open("pmoveReady.txt", "r") as f:
+                if f.read() == "True":
+                    break
+        # set move to not ready
+        with open("pMoveReady.txt", "w"):
+            f.write("False")
+        # read move
+        with open("playermove.txt", "r") as f:
+            sanMove = f.read()
+        return sanMove
+
+    def humanMoveFromHTML():
+        # runs loop until move is gotten
+        sanMove = getMove()
+        # play move
+        while True:
+            try:
+                b.push_san(sanMove)
+                updateFiles()
+                break
+            except ValueError:
+                if sanMove.lower() == "undo":
+                    b.pop()
+                    b.pop()
+                    moveList.pop(moveList[-1])
+                    moveList.pop(moveList[-1])
+                    timeList.pop()
+                    updateFiles()
+                else:
+                    print("Invalid move.")
+        moveList.append(sanMove)
+
     gameType = ""
     while gameType not in ["c", "p"]:
         gameType = input(
@@ -558,6 +595,7 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
     elif gameType == "p":
         print(f"Starting Game:\n{symbolPrint(b)}")
         depth = 2
+
         def white():
             if computerColor == "w":
                 evaluation = computerMove(depth)
