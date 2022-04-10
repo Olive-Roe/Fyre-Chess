@@ -425,7 +425,7 @@ def formatPGN(pgn, player1, player2, result, roundnumber="?"):
     return f'''[Event "?"]\n[Site "?"]\n[Date "{datetime.now().strftime('%Y.%m.%d')}"]\n[Round "{roundnumber}"]\n[White "{player1}"]\n[Black "{player2}"]\n[Result "{result}"]\n\n{pgn}\n\n'''
 
 
-def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
+def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}, fromWeb=True):
     global b
     moveList = []
     timeList = []
@@ -433,7 +433,6 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
     pgn = ""
     b = startingBoard
     t = tree
-    move = ""
     inOpening = True
     starting = giveTurnColor(startingBoard)
 
@@ -523,7 +522,12 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
         # play move
         while True:
             # runs loop until move is gotten
-            sanMove = getMove()
+            if fromWeb:
+                sanMove = getMove()
+            else:
+                inp = input("\n What do you move? ")
+                b.push_san(inp)
+                print(symbolPrint(b), "\n")
             try:
                 b.push_san(sanMove)
                 updateFiles()
@@ -532,8 +536,8 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
                 if sanMove.lower() == "undo":
                     b.pop()
                     b.pop()
-                    moveList.pop(moveList[-1])
-                    moveList.pop(moveList[-1])
+                    moveList.pop()
+                    moveList.pop()
                     timeList.pop()
                     updateFiles()
                 else:
@@ -577,10 +581,12 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}):
             while True:
                 wEval = cMove(wDepth)
                 if wEval == "end":
+                    updateFiles(wEval)
                     break
                 updateFiles(wEval)
                 bEval = cMove(bDepth)
                 if bEval == "end":
+                    updateFiles(wEval)
                     break
                 updateFiles(bEval)
             wScore, bScore = result(wScore, bScore, b)
