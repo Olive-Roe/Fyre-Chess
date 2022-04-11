@@ -490,6 +490,9 @@ def playAgainstPlayer(computerColor="w", startingBoard=Board(), tree={}, fromWeb
                 break
             except ValueError:
                 if inp.lower() == "undo":
+                    if moveList == []:
+                        # starting position, nothing to undo
+                        continue
                     print("Undoing...")
                     b.pop()
                     b.pop()
