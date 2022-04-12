@@ -4,7 +4,7 @@ from engineDEV import giveTurnColor, getPGN, evaluateThis, symbolPrint, formatPG
 from chess import Board, WHITE, BLACK
 from chess import svg as svg
 from threading import Thread
-from time import sleep, time
+from time import time
 
 
 def getMove():
@@ -34,14 +34,6 @@ def result(wScore, bScore, board):
         raise ValueError(
             f"Board: {board} board.result returned unexpected value")
     return wScore, bScore
-
-
-def end(board: Board):
-    "Returns a end message"
-    if board.is_game_over:
-        if board.result() == "1/2-1/2":
-            return "Draw"
-        return "Black wins" if board.turn else "White wins"
 
 
 def playAgainstPlayer(computerColor="b", startingBoard=Board(), tree=None, fromWeb=True, gameType="c", rounds=1):
@@ -191,13 +183,17 @@ def playAgainstPlayer(computerColor="b", startingBoard=Board(), tree=None, fromW
                     localUpdatePage(whiteEval)
                     break
             currentPGN = getPGN(moveList, b)
+            assert b.is_game_over()
             # end message to show who won
+            end = "Draw" if b.result() == "1/2-1/2" else "Black wins" if b.turn else "White wins"
             print(f"{end(b)}\n{timeList}\n{currentPGN}")
             # format pgn with round number (i from for loop)
             if computerColor == "w":
-                cPGN = formatPGN(currentPGN, f"FC 1.3.2 (depth {depth})", "Human", b.result(), i+1)
+                cPGN = formatPGN(
+                    currentPGN, f"FC 1.3.2 (depth {depth})", "Human", b.result(), i+1)
             else:
-                cPGN = formatPGN(currentPGN, "Human", f"FC 1.3.2 (depth {depth})", b.result(), i+1)
+                cPGN = formatPGN(currentPGN, "Human",
+                                 f"FC 1.3.2 (depth {depth})", b.result(), i+1)
             pgn += currentPGN
             # append latest game to gamelog
             with open("logfiles/gamelog.txt", "a") as f:
