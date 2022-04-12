@@ -36,10 +36,6 @@ def result(wScore, bScore, board):
     return wScore, bScore
 
 
-def endCheck(board: Board):
-    return board.is_game_over()
-
-
 def end(board: Board):
     "Returns a end message"
     if board.is_game_over:
@@ -122,7 +118,7 @@ def playAgainstPlayer(computerColor="b", startingBoard=Board(), tree=None, fromW
         def cMove(depth=2):
             evaluation = computerMove(depth)
             print(getPGN(moveList, b))
-            if endCheck(b):
+            if b.is_game_over():
                 return "end"
             return evaluation
 
@@ -164,7 +160,7 @@ def playAgainstPlayer(computerColor="b", startingBoard=Board(), tree=None, fromW
             else:
                 humanMoveFromHTML()
             print(getPGN(moveList, b))
-            if endCheck(b):
+            if b.is_game_over():
                 return "end"
             return evaluation if computerColor == "w" else "-"
 
@@ -174,7 +170,7 @@ def playAgainstPlayer(computerColor="b", startingBoard=Board(), tree=None, fromW
             else:
                 humanMoveFromHTML()
             print(getPGN(moveList, b))
-            if endCheck(b):
+            if b.is_game_over():
                 return "end"
             return evaluation if computerColor == "b" else "-"
         cScore, hScore = 0, 0
@@ -197,10 +193,11 @@ def playAgainstPlayer(computerColor="b", startingBoard=Board(), tree=None, fromW
             currentPGN = getPGN(moveList, b)
             # end message to show who won
             print(f"{end(b)}\n{timeList}\n{currentPGN}")
-            wPlayer = "Human" if computerColor == "b" else f"FC 1.3.2 (depth {depth})"
-            bPlayer = "Human" if computerColor == "w" else f"FC 1.3.2 (depth {depth})"
             # format pgn with round number (i from for loop)
-            cPGN = formatPGN(currentPGN, wPlayer, bPlayer, b.result(), i+1)
+            if computerColor == "w":
+                cPGN = formatPGN(currentPGN, f"FC 1.3.2 (depth {depth})", "Human", b.result(), i+1)
+            else:
+                cPGN = formatPGN(currentPGN, "Human", f"FC 1.3.2 (depth {depth})", b.result(), i+1)
             pgn += currentPGN
             # append latest game to gamelog
             with open("logfiles/gamelog.txt", "a") as f:
@@ -234,6 +231,7 @@ def updatePage(evaluation, moveList, b, orientation="w"):
         turbo.push([turbo.update(webSVG, 'board'), turbo.update(
             pgn, 'pgn'), turbo.update(currentEval, 'eval')])
 
+
 def clear_tempfiles():
     open('logfiles/playermove.txt', 'w').close()
     open('logfiles/pmoveReady.txt', 'w').close()
@@ -241,10 +239,8 @@ def clear_tempfiles():
 
 t1 = Thread(target=runGame)
 t2 = Thread(target=start_flask_app)
-t3 = Thread(target=update)
 
 if __name__ == "__main__":
     clear_tempfiles()
     t1.start()
     t2.start()
-    # t3.start()
