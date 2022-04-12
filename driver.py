@@ -36,18 +36,6 @@ def result(wScore, bScore, board):
     return wScore, bScore
 
 
-def updatePage2(evaluation, moveList, b, orientation="w"):
-    if moveList is None:
-        moveList = []
-    with open("logfiles/xmlboard.txt", "w") as f:
-        boardOrientation = WHITE if orientation == "w" else BLACK
-        f.write(svg.board(b, size=600, orientation=boardOrientation))
-    with open("logfiles/livePGN.txt", "w") as f:
-        f.write(getPGN(moveList, b))
-    with open("logfiles/evaluation.txt", "w") as f:
-        f.write(str(evaluation))
-
-
 def endCheck(board: Board):
     return board.is_game_over()
 
@@ -246,25 +234,7 @@ def updatePage(evaluation, moveList, b, orientation="w"):
         turbo.push([turbo.update(webSVG, 'board'), turbo.update(
             pgn, 'pgn'), turbo.update(currentEval, 'eval')])
 
-
-def update():
-    with webapp.app_context():
-        while True:
-            sleep(0.25)
-            with open("logfiles/xmlboard.txt", "r") as f:
-                svg = f.read()
-            with open("logfiles/livePGN.txt", "r") as f:
-                pgn = f.read()
-            with open("logfiles/evaluation.txt", "r") as f:
-                currentEval = f.read()
-            turbo.push([turbo.update(svg, 'board'), turbo.update(
-                pgn, 'pgn'), turbo.update(currentEval, 'eval')])
-
-
 def clear_tempfiles():
-    open('logfiles/evaluation.txt', 'w').close()
-    open('logfiles/livePGN.txt', 'w').close()
-    open('logfiles/xmlboard.txt', 'w').close()
     open('logfiles/playermove.txt', 'w').close()
     open('logfiles/pmoveReady.txt', 'w').close()
 
