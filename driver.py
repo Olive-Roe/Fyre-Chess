@@ -186,7 +186,7 @@ def playAgainstPlayer(computerColor="b", startingBoard=Board(), tree=None, fromW
             assert b.is_game_over()
             # end message to show who won
             end = "Draw" if b.result() == "1/2-1/2" else "Black wins" if b.turn else "White wins"
-            print(f"{end(b)}\n{timeList}\n{currentPGN}")
+            print(f"{end}\n{timeList}\n{currentPGN}")
             # format pgn with round number (i from for loop)
             if computerColor == "w":
                 cPGN = formatPGN(
